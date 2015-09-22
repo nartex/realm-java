@@ -51,10 +51,7 @@ public class IntroExampleActivity extends Activity {
         if (savedInstanceState != null) {
             Person p = Parcels.unwrap(savedInstanceState.getParcelable("parcel"));
             p.getCats().get(0).getName();
-
         }
-
-
 
         // These operations are small enough that
         // we can generally safely run them on the UI thread.
