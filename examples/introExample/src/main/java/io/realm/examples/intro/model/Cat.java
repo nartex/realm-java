@@ -16,8 +16,15 @@
 
 package io.realm.examples.intro.model;
 
+import org.parceler.Parcel;
+
+import io.realm.CatRealmProxy;
+import io.realm.PersonRealmProxy;
 import io.realm.RealmObject;
 
+@Parcel(implementations = { CatRealmProxy.class },
+        value = Parcel.Serialization.BEAN,
+        analyze = { Cat.class })
 public class Cat extends RealmObject {
     private String name;
 

@@ -23,6 +23,8 @@ import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.parceler.Parcels;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.examples.intro.model.Cat;
@@ -37,12 +39,22 @@ public class IntroExampleActivity extends Activity {
 
     private Realm realm;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realm_basic_example);
         rootLayout = ((LinearLayout) findViewById(R.id.container));
         rootLayout.removeAllViews();
+
+        if (savedInstanceState != null) {
+            Person p = Parcels.unwrap(savedInstanceState.getParcelable("parcel"));
+            p.getCats().get(0).getName();
+
+        }
+
+
 
         // These operations are small enough that
         // we can generally safely run them on the UI thread.
@@ -69,6 +81,12 @@ public class IntroExampleActivity extends Activity {
                 showStatus(result);
             }
         }.execute();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("parcel", Parcels.wrap(Person.class, realm.where(Person.class).findFirst()));
     }
 
     @Override

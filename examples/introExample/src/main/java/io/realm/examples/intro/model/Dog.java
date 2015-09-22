@@ -16,8 +16,15 @@
 
 package io.realm.examples.intro.model;
 
+import org.parceler.Parcel;
+
+import io.realm.DogRealmProxy;
+import io.realm.PersonRealmProxy;
 import io.realm.RealmObject;
 
+@Parcel(implementations = { DogRealmProxy.class },
+        value = Parcel.Serialization.BEAN,
+        analyze = { Dog.class })
 public class Dog extends RealmObject {
     private String name;
 

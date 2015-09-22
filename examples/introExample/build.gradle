@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-command'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 19
@@ -33,4 +34,6 @@ tasks.preBuild {
 
 dependencies {
     compile files("../../realm/build/libs/realm-${version}.jar")
+    compile "org.parceler:parceler-api:1.0.3"
+    apt "org.parceler:parceler:1.0.3"
 }

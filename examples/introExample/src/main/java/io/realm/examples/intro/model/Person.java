@@ -16,12 +16,19 @@
 
 package io.realm.examples.intro.model;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelPropertyConverter;
+
+import io.realm.PersonRealmProxy;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 
 // Your model just have to extend RealmObject.
 // This will inherit an annotation which produces proxy getters and setters for all fields.
+@Parcel(implementations = { PersonRealmProxy.class },
+        value = Parcel.Serialization.BEAN,
+        analyze = { Person.class })
 public class Person extends RealmObject {
 
     // All fields are by default persisted.
@@ -72,6 +79,7 @@ public class Person extends RealmObject {
         return cats;
     }
 
+    @ParcelPropertyConverter(CatListParcelConverter.class)
     public void setCats(RealmList<Cat> cats) {
         this.cats = cats;
     }
