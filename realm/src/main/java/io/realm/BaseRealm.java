@@ -436,19 +436,21 @@ abstract class BaseRealm implements Closeable {
      * Releases a reference to the Realm file. If reference count reaches 0 any cached configurations
      * will be removed.
      */
-    protected synchronized void releaseFileReference() {
-        String canonicalPath = configuration.getPath();
-        List<RealmConfiguration> pathConfigurationCache = globalPathConfigurationCache.get(canonicalPath);
-        pathConfigurationCache.remove(configuration);
-        if (pathConfigurationCache.isEmpty()) {
-            globalPathConfigurationCache.remove(canonicalPath);
-        }
+    protected void releaseFileReference() {
+        synchronized (BaseRealm.class) {
+            String canonicalPath = configuration.getPath();
+            List<RealmConfiguration> pathConfigurationCache = globalPathConfigurationCache.get(canonicalPath);
+            pathConfigurationCache.remove(configuration);
+            if (pathConfigurationCache.isEmpty()) {
+                globalPathConfigurationCache.remove(canonicalPath);
+            }
 
-        Integer refCount = globalRealmFileReferenceCounter.get(canonicalPath);
-        if (refCount == null || refCount == 0) {
-            throw new IllegalStateException("Trying to release a Realm file that is already closed");
+            Integer refCount = globalRealmFileReferenceCounter.get(canonicalPath);
+            if (refCount == null || refCount == 0) {
+                throw new IllegalStateException("Trying to release a Realm file that is already closed");
+            }
+            globalRealmFileReferenceCounter.put(canonicalPath, refCount - 1);
         }
-        globalRealmFileReferenceCounter.put(canonicalPath, refCount - 1);
     }
 
     // package protected so unit tests can access it
