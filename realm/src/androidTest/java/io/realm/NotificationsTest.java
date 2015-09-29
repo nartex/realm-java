@@ -23,6 +23,7 @@ import android.util.Log;
 import junit.framework.AssertionFailedError;
 
 import java.lang.ref.WeakReference;
+import java.sql.Time;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -586,7 +587,7 @@ public class NotificationsTest extends AndroidTestCase {
                 try {
                     mainThreadCommitCompleted.await();
                 } catch (InterruptedException e) {
-                    fail();
+                    fail("Thread interrupted"); // This will prevent backgroundThreadStopped from being called.
                 }
                 realm.close();
                 backgroundThreadStopped.countDown();
@@ -594,17 +595,27 @@ public class NotificationsTest extends AndroidTestCase {
         });
 
         // Create a commit on another thread
-        if (!backgroundLooperStartedAndStopped.await(5, TimeUnit.SECONDS)) {
-            fail();
-        }
+        awaitOrThrow(backgroundLooperStartedAndStopped);
         Realm realm = Realm.getInstance(config);
         Logger logger = TestHelper.getFailureLogger(Log.WARN);
         RealmLog.add(logger);
+
         realm.beginTransaction();
         realm.commitTransaction(); // If the Handler on the background is notified it will trigger a Log warning.
         mainThreadCommitCompleted.countDown();
-        backgroundThreadStopped.await(5, TimeUnit.SECONDS);
+        awaitOrThrow(backgroundThreadStopped);
+
         realm.close();
         RealmLog.remove(logger);
+    }
+
+    private void awaitOrThrow(CountDownLatch latch) {
+        try {
+            if (!latch.await(5, TimeUnit.SECONDS)) {
+                fail("Latch timed out " + latch);
+            }
+        } catch (InterruptedException e) {
+            fail("Latch was interrupted " + e);
+        }
     }
 }
