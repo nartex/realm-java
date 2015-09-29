@@ -23,7 +23,6 @@ import android.util.Log;
 import junit.framework.AssertionFailedError;
 
 import java.lang.ref.WeakReference;
-import java.sql.Time;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 
 import io.realm.entities.AllTypes;
 import io.realm.entities.Dog;
